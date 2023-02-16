@@ -1,0 +1,696 @@
+﻿<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html" />
+    <meta name="save" content="history" />
+    <title>Data Consumption</title>
+    <link rel="stylesheet" type="text/css" href="Classic.css" />
+  </head>
+  <body>
+    <input type="hidden" id="userDataCache" class="userDataStyle" />
+    <input type="hidden" id="hiddenScrollOffset" />
+    <div id="header">
+      <table width="100%" id="topTable">
+        <tr id="headerTableRow1">
+          <td align="left">
+            <span id="runningHeaderText">SQLite Tutorial</span>
+          </td>
+        </tr>
+        <tr id="headerTableRow2">
+          <td align="left">
+            <span id="nsrTitle"></span>
+          </td>
+        </tr>
+        <tr id="headerTableRow3">
+          <td />
+        </tr>
+      </table>
+    </div>
+    <div id="mainSection">
+      <div id="mainBody">
+        <div id="allHistory" class="saveHistory" onsave="saveAll()" onload="loadAll()" />
+          <p>
+              <b>SQLite</b> is a
+              <br />
+              ◾Server-less – accesses disk directly.<br />
+              ◾Easy to setup, configure and use.<br />
+              ◾File-based storage, one database per file.<br />
+              ◾Cross Platform/Architecture(ARM/x64/x86).<br />
+
+              In this tutorial we will learn how to have SQLite DB in our previous project <b>DemoTUTMvvm</b>. The objective of the app is to save user data in SQLite DB and retrieve the saved data from the SQLite DB in order to display it back on the front end.
+
+
+          </p>
+          </br>
+          <p>
+              <b>Task 1:Install SQLite API & sqlite-net nuget package <b>DemoTUTMvvm</b> App</b>.
+
+          </p>
+          <br />
+          <p>
+              
+          </p>
+          <br />
+          <p>To implement <b>Model class</b> in the app, you would first need to create <b>Model folder</b> by right clicking on <b>Project>Add>New Folder</b>.Right click on folder name <b>Model>Add>Class.cs</b></p>
+          <br />
+          <ol>
+              <li>
+                  Open project <b>DemoTUTMvvm</b>.
+              </li>
+
+
+              <li>
+                  Click on <b>TOOLS>Extensions and Updates</b> to install api for <b>SQLite</b>.
+              </li>
+
+              <li>
+                  Your click on <b>Extensions and Updates</b> will open a new window whereby in left pane select online and search for sqlite and download <b>SQLite for Windows Runtime(Windows 8.1)</b>.
+              </li>
+              <li>
+                  Once SQLite download is successfully completed you will notice a green tick mark on the <b>SQLite for Windows Runtime(Windows 8.1)</b> and you would need to restart the your project to affect the changes.
+              </li>
+              <li>
+                  Once the project is restarted you need to install a Nuget Package called as sqlite-net which has a wrapper class to interact with <b>SQLite for Windows Runtime(Windows 8.1)</b>
+                  </li>
+              <li>
+                  To install <b>sqlite-net Nuget Package</b> click on <b>TOOLS—>Library Package Manager–>Manage Nuget Package</b> for Solution and search for <b>sqlite-net</b> in the new appeared window.
+                  </li>
+              <li>
+                  Now you need to add reference of <b>SQLite for Windows Runtime(Windows 8.1)</b> in the app.Right click on <b>References</b> in your project and click on<b> Add Reference…</b>
+                  </li>
+              <li>
+                  In appeared Window click on <b>Extensions</b> under <b>Windows</b> and select <b>SQLite for Windows Runtime(Windows 8.1)</b>.
+                  </li>
+          </ol>
+          <p>
+
+
+
+
+
+          </p>
+       </br>
+        <p>
+          <b>Task 2: Change Architecture of the application</b>
+            
+        </p>
+          <br/>
+        <p>After adding references to your project you need to change Platform of the project <b>Microsoft Visual C++ Runtime Package</b> targets a specific Platform instead of neutral/Any CPU. You can then create application package for each of the Platform i.e. ARM/x64/x86 by running your app after changing project platform.
+           </p>
+     <br/>
+            
+          <ol>
+            <li>Right click on your solution and click on properties.</li>
+              <li>Click on Properties will open a window whereby in left pane you need to click on <b>Configuration Properties</b> and change the <b>Platform from Any CPU</b>to x86 and click on OK.</li>
+
+              
+          
+           </ol>
+          <p>
+              <b>Task 3 : Make changes to App.xaml.cs in DemoTUTMvvm class.</b>
+          </p>
+         
+          <p>Create an object in the main class i.e <b>sealed partial class App : Application</b> of App.xaml.cs to define SQLite database path.</p>
+          <br/> 
+          <ol>
+              <li>Just before <b>App.xaml.cs</b> constructor define the object in following manner.
+                  <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre> public string DBPath { get; set; }
+        public App()
+        {
+            this.InitializeComponent();
+            this.Suspending += OnSuspending;
+        }
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+              </li>
+              <li>Once you defined the method then you would need to assign path to <b>DBPath</b> and create table for the database just before intializing frame i.e. <b>Window.Current.Content = rootFrame;</b><div class="code">
+                  <span codelanguage="CSharp">
+                      <table width="100%" cellspacing="0" cellpadding="0">
+                          <tr>
+                              <th>C#</th>
+                  </span></th></tr><tr>
+                      <td colspan="2">
+                          <pre> DBPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "TUTDATa.sqlite");
+                using(var db = new SQLite.SQLiteConnection(DBPath))
+                {
+                 //Objects of Model class would become coloumns in SQLite DB.
+                 db.CreateTable&lt;Model&gt;();
+                }
+                // Place the frame in the current Window
+                Window.Current.Content = rootFrame;
+                                                       </pre>
+                      </td>
+                  </tr>
+                  </table></span>
+                  </div>
+              </li>
+             
+           
+          </ol>
+        
+        <p>
+          <b>Task 4: - Create an object in <b>Model</b> class of projrct DemoTUTMvvm.</b>
+        </p>
+          
+         
+        <p>We would have to create an object in order to give an unique value to the user data which we going to save in <b>sqlite</b> database.</p>
+        <br/>
+          
+          <ol>
+              <li>Create an object ID, which would be treated as primary key in the database.<b>NOTE:- The Object of model class would become coloumns of table MODEL in SQLite Database.</b></li>
+              <li>Define ID in following manner and make it Primary Key.
+                  
+                  <div class="code"><span codeLanguage="CSharp"><table width="100%" cellspacing="0" cellpadding="0"><tr><th>C#</th>
+                  </span></th></tr><tr><td colspan="2"><pre> 
+        private int id = 0;
+        [SQLite.PrimaryKey]
+        public int ID
+        {
+            get { return id; }
+            set {
+                if (id != value)
+                {
+                    id = value;
+                    //function to handle property/value change 
+                    RaisedPropertyChange("id");
+                }
+            }
+        }
+                                                       </pre></td></tr></table></span></div></li>
+              </ol>
+
+
+
+
+           <p>
+              <b>Task 5:- Make changes to ViewModel class in DemoTUTMvvm class.</b>
+          </p>
+         
+          <p>In ViewModel class we would create method to Save user data,Retrieve user data and to create new ID for the user data.</p>
+          <br/> 
+          <ol>
+              <li>Comment <b>ViewModel Constructor</b>.</li>
+              <li>Create an object ID.
+                   <div class="code"><span codeLanguage="CSharp"><table width="100%" cellspacing="0" cellpadding="0"><tr><th>C#</th>
+                  </span></th></tr><tr><td colspan="2"><pre>  
+               private int Id;
+                                                       </pre></td></tr></table></span></div></li>
+              <li>Make changes to getter and setter method of Name, Description and ID.
+                  <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre>
+                                   
+       public int ID
+        {
+            get { return Id; }
+            set
+            {
+                if (Id == value)
+                {
+                    return;
+                }
+                Id = value;
+            }
+
+        }
+        
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if(name == value)
+                {
+                    return;
+                }
+                name = value;
+            }
+
+        }
+        public string Description
+        {
+            get { return description; }
+            set
+            {
+                if (description == value)
+                {
+                    return;
+                }
+                description = value;
+            }
+
+        }
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+              </li>
+              <li>Create an instance of <b>App.xaml.cs</b> in following manner to access <b>DBPath</b> defined in App.xaml.cs.<div class="code">
+                  <span codelanguage="CSharp">
+                      <table width="100%" cellspacing="0" cellpadding="0">
+                          <tr>
+                              <th>C#</th>
+                  </span></th></tr><tr>
+                      <td colspan="2">
+                          <pre> private DemoTUTMvvm.App Tut = (App.Current as App);
+                                                       </pre>
+                      </td>
+                  </tr>
+                  </table></span>
+                  </div>
+              </li>
+        <li>Create method to Save user data
+            <div class="code">
+                  <span codelanguage="CSharp">
+                      <table width="100%" cellspacing="0" cellpadding="0">
+                          <tr>
+                              <th>C#</th>
+                  </span></th></tr><tr>
+                      <td colspan="2">
+                          <pre> 
+        public string SaveData(ViewModel UserData)
+        {
+            string result = string.Empty;
+            //creating a connection.
+            using(var db = new SQLite.SQLiteConnection(Tut.DBPath))
+            {
+                try
+                {
+                    int success = db.Insert(new Model()
+                        {
+                            ID = UserData.ID,
+                            Description = UserData.Description,
+                            Name = UserData.Name
+
+                        });
+                    result = "Success";
+                }
+                catch(Exception ex)
+                {
+                    result = "Data not inserted.";
+                }
+
+             }
+            return result;
+
+        }
+                                                           </pre>
+                      </td>
+                  </tr>
+                  </table></span>
+                  </div>
+        </li>
+              <li>Create a method to get new ID in following manner
+                  <div class="code">
+                  <span codelanguage="CSharp">
+                      <table width="100%" cellspacing="0" cellpadding="0">
+                          <tr>
+                              <th>C#</th>
+                  </span></th></tr><tr>
+                      <td colspan="2">
+                          <pre> 
+        public int DataID()
+        {
+            
+            int id;
+            using (var db = new SQLite.SQLiteConnection(Tut.DBPath))
+            {
+              var ab = db.Table&lt;Model&gt;();
+              id = ab.Count();
+            }
+            if(id == 0)
+            {
+                id = 1;
+            }
+            else
+            {
+                id += 1;
+            }
+
+            return id;
+        }
+                                                       </pre>
+                      </td>
+                  </tr>
+                  </table></span>
+                  </div>
+                  </li>
+              <li>Create method to get User Data in followin manner
+                  <div class="code">
+                  <span codelanguage="CSharp">
+                      <table width="100%" cellspacing="0" cellpadding="0">
+                          <tr>
+                              <th>C#</th>
+                  </span></th></tr><tr>
+                      <td colspan="2">
+                          <pre> 
+       public ViewModel GetData(int DataID)
+        {
+            var TUTDATa = new ViewModel();
+            using (var db = new SQLite.SQLiteConnection(Tut.DBPath))
+            {
+                //in order to Retrieve user data which has the same ID passed from View in SQLite Database
+                var ab = db.Table&lt;Model&gt;().Where(David => David.ID == DataID).SingleOrDefault();
+                TUTDATa.Name = ab.Name;
+                TUTDATa.Description = ab.Description;
+             
+            }
+            return TUTDATa;
+
+        }
+                                                       </pre>
+                      </td>
+                  </tr>
+                  </table></span>
+                  </div>
+              </li>
+
+              <li>
+                  Your ViewModel class should like follwoing
+                    <div class="code">
+                  <span codelanguage="CSharp">
+                      <table width="100%" cellspacing="0" cellpadding="0">
+                          <tr>
+                              <th>C#</th>
+                  </span></th></tr><tr>
+                      <td colspan="2">
+                          <pre> 
+        private string name;
+        private string description;
+        private int Id;
+        private DemoTUTMvvm.App Tut = (App.Current as App);
+
+        public int ID
+        {
+            get { return Id; }
+            set
+            {
+                if (Id == value)
+                {
+                    return;
+                }
+                Id = value;
+            }
+
+        }
+        
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if(name == value)
+                {
+                    return;
+                }
+                name = value;
+            }
+
+        }
+        public string Description
+        {
+            get { return description; }
+            set
+            {
+                if (description == value)
+                {
+                    return;
+                }
+                description = value;
+            }
+
+        }
+
+        //To Save User data
+        public string SaveData(ViewModel UserData)
+        {
+            string result = string.Empty;
+            //creating a connection.
+            using(var db = new SQLite.SQLiteConnection(Tut.DBPath))
+            {
+                try
+                {
+                    int success = db.Insert(new Model()
+                        {
+                            ID = UserData.ID,
+                            Description = UserData.Description,
+                            Name = UserData.Name
+
+                        });
+                    result = "Success";
+                }
+                catch(Exception ex)
+                {
+                    result = "Data not inserted.";
+                }
+
+             }
+            return result;
+        }
+
+        public ViewModel GetData(int DataID)
+        {
+            var TUTDATa = new ViewModel();
+            using (var db = new SQLite.SQLiteConnection(Tut.DBPath))
+            {
+               //in order to Retrieve user data which has the same ID passed from View in SQLite Database
+                var ab = db.Table&lt;Model&gt;().Where(David => David.ID == DataID).SingleOrDefault();
+                TUTDATa.Name = ab.Name;
+                TUTDATa.Description = ab.Description;
+               
+            }
+            return TUTDATa;
+
+        }
+        public int DataID()
+        {
+            
+            int id;
+            using (var db = new SQLite.SQLiteConnection(Tut.DBPath))
+            {
+              var ab = db.Table&lt;Model&gt;();
+              id = ab.Count();
+            }
+            if(id == 0)
+            {
+                id = 1;
+            }
+            else
+            {
+                id += 1;
+            }
+
+            return id;
+        }
+        
+                                                       </pre>
+                      </td>
+                  </tr>
+                  </table></span>
+                  </div>
+
+                  </li>
+          </ol>
+
+          <p><b>Task 6 - Make changes in BasicPage.xaml in View folder of DemoTUTMvvm</b> 
+              
+          </p>
+          <p>In <b>BasicPage.xaml</b> we create the TextBox and a button in order to have user details and save it in SQLite Database. We will bind the <b>textbox</b> with ViewModel class property and will use <b>TwoWay MODE of binding which will automatically change the property of the user details in ViewModel.</b></p>
+          </br>
+          <ol>
+              <li>In <b>BasicPage.xaml</b> define textbox and a button.
+
+                  <div class="code"><span codeLanguage="CSharp"><table width="100%" cellspacing="0" cellpadding="0"><tr><th>XAML</th>
+                  </span></th></tr><tr><td colspan="2"><pre> 
+            &lt;StackPanel Grid.Row="1" Margin="120,0,0,0 "&gt;
+                        &lt;TextBox Text="{Binding Name,Mode=TwoWay}" Foreground="Yellow" Margin="10" FontWeight="Bold" FontSize="20"/&gt;
+            &lt;TextBox Text="{Binding Description,Mode=TwoWay}" Margin="10"  Foreground="Aqua" FontSize="15"/&gt;
+            &lt;Button Content="Save" Click="Button_Click" Margin="10"/&gt;
+        &lt;/StackPanel&gt;
+
+
+
+                                                       </pre></td></tr></table></span></div></li>
+
+              <li>After defining textbox and button, Right click on <b>Button_Click</b> and in drop down menu click on <b>Go To Defination</b> which will redirect you to the <b>Button click event</b> in <b>BasicPage.xaml.cs</b> page.
+             </ol>
+              
+            <p>
+          <b>Task 7 - Make changes in BasicPage.xaml.cs of DemoTUTMvvm</b></br>
+                <p>In <b>BasicPage.xaml.cs</b> page we will write code to Save user data on button click and retrieve it back.</p>
+                <ol>
+                    <li>Create an instance of <b>ViewModel</b> just before the constructor of the page and comment <b>this.DataContext = new ViewModel();</b> in constructor of the page
+                         <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre> 
+        ViewModel TUTDATA = null;
+
+        //Constructor of the page.
+        public BasicPage()
+        {
+            this.InitializeComponent();
+            this.navigationHelper = new NavigationHelper(this);
+            this.navigationHelper.LoadState += navigationHelper_LoadState;
+            this.navigationHelper.SaveState += navigationHelper_SaveState;
+          //this.DataContext = new ViewModel();
+        }
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+                        </li>
+
+                    <li>
+                        In <b>navigationHelper_LoadState</b> fuction of page create new instance of ViewModel and in order to call the method to create an ID for the user data.
+                         <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre> 
+            TUTDATA = new ViewModel();
+            TUTDATA.ID = TUTDATA.DataID();
+            this.DataContext = TUTDATA;
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+                        </li>
+
+                     <li>
+                        <b>navigationHelper_LoadState</b> should like following.
+                         <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre>  
+        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        {
+            TUTDATA = new ViewModel();
+            TUTDATA.ID = TUTDATA.DataID();
+            this.DataContext = TUTDATA;
+        }
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+                        </li>
+
+                    <li>
+                        To save user data in Database on <b> Button click</b> you would need to instantaneous SaveData fucntion defined in ViewModel class in the event click funtion created by <b>Button Click</b>.
+                         <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre>   
+            var a = TUTDATA.SaveData(TUTDATA);
+            if(a.Contains("Success"))
+            {
+                MessageDialog b = new MessageDialog("Data Saved");
+                b.ShowAsync();
+            }
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+
+                    </li>
+
+                       <li>
+                        <b>Button_Click</b> funtion should like following.
+                         <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre>   
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var a = TUTDATA.SaveData(TUTDATA);
+            if(a.Contains("Success"))
+            {
+                MessageDialog b = new MessageDialog("Data Saved");
+                b.ShowAsync();
+            }
+
+        }
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+                        </li>
+                    <li> 
+                        To pull user data comment <b>TUTDATA.ID = TUTDATA.DataID();</b> and define <b>TUTDATA = TUTDATA.GetData(1);</b> in <b>navigationHelper_LoadState</b>.
+                         <div class="code">
+                      <span codelanguage="CSharp">
+                          <table width="100%" cellspacing="0" cellpadding="0">
+                              <tr>
+                                  <th>C#</th>
+                      </span></th></tr><tr>
+                          <td colspan="2">
+                              <pre>   
+        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        {
+            TUTDATA = new ViewModel();
+            TUTDATA = TUTDATA.GetData(1);
+          // TUTDATA.ID = TUTDATA.DataID();
+            this.DataContext = TUTDATA;
+        }
+                                                       </pre>
+                          </td>
+                      </tr>
+                      </table></span>
+                  </div>
+                        </li>
+
+                    </ol>
+        </p>
+
+            <p>
+          <b>Task 8 - Run your application</b>
+        </p>
+       
+         
+      </div>
+      <div id="footer">
+        
+        
+        To give feedback please write to v-shkhat@microsoft.com<p /></div>
+    
+  </body>
+</html>
